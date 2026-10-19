@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cut">
+<title>buat devi</title>
+<meta name="theme-color" content="#07070f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#07070f;color:#e8e8f5;overflow:hidden;font-family:'Space Grotesk',system-ui,sans-serif}
+canvas#bg{position:fixed;inset:0;z-index:0}
+.blob{position:fixed;width:60vmax;height:60vmax;border-radius:50%;filter:blur(80px);opacity:.35;z-index:0;animation:float 18s ease-in-out infinite alternate}
+.b1{background:#6d5dfc;top:-20vmax;left:-20vmax}
+.b2{background:#00d4c8;bottom:-25vmax;right:-20vmax;animation-delay:-6s}
+.b3{background:#ff6fa8;top:40%;left:50%;width:35vmax;height:35vmax;opacity:.18;animation-delay:-12s}
+@keyframes float{to{transform:translate(8vmax,6vmax) scale(1.15)}}
+.screen{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .8s,transform .8s}
+.hidden{opacity:0;pointer-events:none;transform:scale(.97)}
+/* terminal */
+.term{width:min(560px,100%);background:rgba(10,10,20,.82);border:1px solid rgba(120,120,255,.25);border-radius:14px;box-shadow:0 0 40px rgba(109,93,252,.25);overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:13px}
+.bar{display:flex;gap:6px;align-items:center;padding:10px 12px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.06)}
+.bar i{width:10px;height:10px;border-radius:50%;display:block}
+.bar span{margin-left:8px;color:#8a8aa8;font-size:11px}
+#log{padding:14px;min-height:260px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.ok{color:#3ef0a0}.dim{color:#7b7b99}.acc{color:#a99bff}.cy{color:#38e6dc}
+.cursor{display:inline-block;width:8px;height:15px;background:#a99bff;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.prog{display:block;height:4px;background:rgba(255,255,255,.08);border-radius:4px;margin:6px 0;overflow:hidden}
+.prog b{display:block;height:100%;width:0;background:linear-gradient(90deg,#6d5dfc,#38e6dc);transition:width .1s}
+.skip{position:fixed;bottom:18px;right:18px;z-index:5;font:12px 'JetBrains Mono',monospace;color:#8a8aa8;background:none;border:1px solid rgba(255,255,255,.12);padding:6px 10px;border-radius:8px}
+/* card */
+.card{position:relative;width:min(440px,100%);padding:28px 24px 22px;border-radius:24px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);box-shadow:0 20px 60px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.12);transform-style:preserve-3d;transition:transform .2s ease-out}
+.card::before{content:"";position:absolute;inset:-1px;border-radius:24px;padding:1px;background:conic-gradient(from var(--a,0deg),#6d5dfc,#38e6dc,#ff6fa8,#6d5dfc);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.7;animation:spin 6s linear infinite;pointer-events:none}
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes spin{to{--a:360deg}}
+.tag{display:inline-flex;align-items:center;gap:6px;font:11px 'JetBrains Mono',monospace;color:#38e6dc;background:rgba(56,230,220,.08);border:1px solid rgba(56,230,220,.25);padding:4px 10px;border-radius:99px}
+.tag i{width:6px;height:6px;border-radius:50%;background:#3ef0a0;box-shadow:0 0 8px #3ef0a0;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.3}}
+h1{font-size:clamp(34px,10vw,46px);line-height:1.05;margin:16px 0 6px;font-weight:700;letter-spacing:-.02em;background:linear-gradient(90deg,#fff,#c9c0ff,#38e6dc,#fff);background-size:300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:300%}}
+.sub{color:#9c9cba;font-size:14px;margin-bottom:18px}
+#msgs{min-height:150px}
+.msg{opacity:0;transform:translateY(12px);transition:.5s cubic-bezier(.2,.8,.2,1);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px 16px 16px 4px;padding:12px 14px;margin-bottom:10px;font-size:15px;line-height:1.5}
+.msg.show{opacity:1;transform:none}
+.msg small{display:block;font:10px 'JetBrains Mono',monospace;color:#6f6f90;margin-bottom:4px}
+.msg code{font-family:'JetBrains Mono',monospace;color:#a99bff;font-size:13px}
+.next{margin-top:8px;width:100%;padding:13px;border-radius:14px;border:0;font:600 14px 'Space Grotesk',sans-serif;color:#0b0b16;background:linear-gradient(90deg,#a99bff,#38e6dc);cursor:pointer;transition:transform .15s,opacity .3s}
+.next:active{transform:scale(.97)}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:14px}
+.dots span{width:6px;height:6px;border-radius:99px;background:rgba(255,255,255,.2);transition:.3s}
+.dots span.on{width:18px;background:#38e6dc}
+#ask{display:none;text-align:center;padding-top:6px}
+#ask p{font-size:18px;margin:6px 0 18px}
+.btns{position:relative;height:150px}
+.btn{position:absolute;top:10px;padding:12px 26px;border-radius:99px;font:600 15px 'Space Grotesk',sans-serif;cursor:pointer;border:0;transition:left .25s,top .25s,transform .2s}
+#yes{left:calc(50% - 130px);background:linear-gradient(90deg,#3ef0a0,#38e6dc);color:#062018;box-shadow:0 0 24px rgba(62,240,160,.35)}
+#no{left:calc(50% + 20px);background:rgba(255,255,255,.08);color:#ccc;border:1px solid rgba(255,255,255,.18)}
+#hint{font:11px 'JetBrains Mono',monospace;color:#6f6f90;min-height:16px}
+#done{display:none;text-align:center;padding:8px 0}
+#done .big{font-size:44px;margin-bottom:6px}
+#done p{font-size:17px;line-height:1.5}
+#done .small{color:#9c9cba;font-size:13px;margin-top:10px;font-family:'JetBrains Mono',monospace}
+.conf{position:fixed;top:-10px;width:8px;height:12px;z-index:9;pointer-events:none;border-radius:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<canvas id="bg"></canvas>
+
+<section class="screen" id="boot">
+  <div class="term">
+    <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span>daffa@agent: ~/pesan</span></div>
+    <div id="log"></div>
+  </div>
+</section>
+<button class="skip" id="skip">skip ›</button>
+
+<section class="screen hidden" id="main">
+  <div class="card" id="card">
+    <span class="tag"><i></i>agent online · v2.0</span>
+    <h1>i'm back.</h1>
+    <div class="sub">halo devi, ada pesan kecil nih 👋</div>
+    <div id="msgs"></div>
+    <button class="next" id="next">lanjut ›</button>
+    <div id="ask">
+      <p>dimaafin ga nih telat balesnya? 🙏</p>
+      <div class="btns"><button class="btn" id="yes">iya, dimaafin</button><button class="btn" id="no">ga</button></div>
+      <div id="hint"></div>
+    </div>
+    <div id="done">
+      <div class="big">🤝</div>
+      <p>makasih udah dimaafin,<br>lanjut ngobrol yuk</p>
+      <div class="small">&gt; status: chat resumed_ ✓</div>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+</section>
+
+<script>
+(()=>{
+/* particles */
+const c=document.getElementById('bg'),x=c.getContext('2d');let W,H,P=[];
+function rs(){W=c.width=innerWidth*devicePixelRatio;H=c.height=innerHeight*devicePixelRatio;c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';
+ const n=Math.min(70,Math.floor(innerWidth*innerHeight/12000));P=[];for(let i=0;i<n;i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4*devicePixelRatio,vy:(Math.random()-.5)*.4*devicePixelRatio,r:(Math.random()*1.6+.4)*devicePixelRatio})}
+rs();addEventListener('resize',rs);
+const D=110*devicePixelRatio;
+(function loop(){x.clearRect(0,0,W,H);for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;x.fillStyle='rgba(180,170,255,.7)';x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()}
+ for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<D){x.strokeStyle='rgba(120,200,255,'+(1-d/D)*.25+')';x.lineWidth=devicePixelRatio*.6;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+ requestAnimationFrame(loop)})();
+
+/* boot */
+const log=document.getElementById('log');
+const lines=[
+ ['<span class="acc">&gt;</span> initializing agent...',' <span class="ok">[ok]</span>'],
+ ['<span class="acc">&gt;</span> connecting ke whatsapp...',' <span class="ok">[ok]</span>'],
+ ['<span class="acc">&gt;</span> scanning chat yg belum dibales...',' <span class="cy">1 found: devi</span>'],
+ ['<span class="acc">&gt;</span> menghitung durasi telat bales...',' <span class="dim">agak lama ya :(</span>'],
+ ['<span class="acc">&gt;</span> loading pesan buat devi','PROG'],
+ ['<span class="acc">&gt;</span> ready.',' <span class="ok">✓</span>']
+];
+let skipped=false;const sleep=t=>new Promise(r=>setTimeout(r,skipped?0:t));
+function strip(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent}
+async function type(html){const line=document.createElement('div');log.appendChild(line);const txt=strip(html);
+ for(let i=1;i<=txt.length;i++){if(skipped)break;line.textContent=txt.slice(0,i);line.insertAdjacentHTML('beforeend','<span class="cursor"></span>');await sleep(18)}
+ line.innerHTML=html;return line}
+async function boot(){
+ for(const [a,b] of lines){const l=await type(a);
+  if(b==='PROG'){const p=document.createElement('span');p.className='prog';p.innerHTML='<b></b>';log.appendChild(p);const bar=p.firstChild;
+   for(let i=0;i<=100;i+=4){bar.style.width=i+'%';await sleep(30)}l.insertAdjacentHTML('beforeend',' <span class="ok">100%</span>')}
+  else{await sleep(260);l.insertAdjacentHTML('beforeend',b)}
+  await sleep(160)}
+ await sleep(500);reveal()}
+let revealed=false;
+function reveal(){if(revealed)return;revealed=true;document.getElementById('boot').classList.add('hidden');document.getElementById('skip').style.display='none';document.getElementById('main').classList.remove('hidden');setTimeout(nextMsg,500)}
+document.getElementById('skip').onclick=()=>{skipped=true;reveal()};
+boot();
+
+/* messages */
+const M=[
+ ['sys.apology','sorry baru bales yaa, kemarin lagi agak hectic 🙏'],
+ ['sys.disclaimer','btw aku ga pinter juga kok, meskipun jadi aslab hehe'],
+ ['sys.truth','aku cuma manfaatin ai secara optimal pake <code>prompt</code> &amp; <code>agentic ai</code>-ku. termasuk halaman ini wkwk'],
+];
+const msgs=document.getElementById('msgs'),nb=document.getElementById('next'),dots=document.getElementById('dots');let k=0;
+for(let i=0;i<=M.length;i++)dots.appendChild(document.createElement('span'));
+function setDots(){[...dots.children].forEach((d,i)=>d.classList.toggle('on',i===Math.min(k,M.length)))}
+function nextMsg(){
+ if(k<M.length){const d=document.createElement('div');d.className='msg';d.innerHTML='<small>// '+M[k][0]+'</small>'+M[k][1];msgs.appendChild(d);requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('show')));k++;setDots();
+  nb.textContent=k===M.length?'satu lagi ›':'lanjut ›'}
+ else{k++;setDots();nb.style.display='none';msgs.style.minHeight='0';msgs.innerHTML='';document.getElementById('ask').style.display='block'}
+}
+nb.onclick=nextMsg;
+
+/* dodge */
+const no=document.getElementById('no'),yes=document.getElementById('yes'),hint=document.getElementById('hint'),box=no.parentElement;let tries=0;
+const H2=['eh kok ga 😅','tombolnya malu','coba yg sebelah aja','ai-nya ga ngizinin hehe','oke ini terakhir…','pencet yg ijo aja ya'];
+function dodge(e){if(e){e.preventDefault()}const bw=box.clientWidth,bh=box.clientHeight,w=no.offsetWidth,h=no.offsetHeight;
+ const br=box.getBoundingClientRect(),yr=yes.getBoundingClientRect(),yl=yr.left-br.left-12,yt=yr.top-br.top-12,yR=yr.right-br.left+12,yB=yr.bottom-br.top+12;let nx,ny,t=0;do{nx=Math.random()*(bw-w);ny=Math.random()*(bh-h);t++}while(t<60&&nx<yR&&nx+w>yl&&ny<yB&&ny+h>yt);
+ no.style.left=nx+'px';no.style.top=ny+'px';hint.textContent='> '+H2[Math.min(tries,H2.length-1)];tries++;
+ yes.style.transform='scale('+Math.min(1+tries*.06,1.3)+')'}
+no.addEventListener('mouseenter',dodge);no.addEventListener('touchstart',dodge,{passive:false});no.addEventListener('click',dodge);
+yes.onclick=()=>{document.getElementById('ask').style.display='none';document.getElementById('done').style.display='block';dots.style.display='none';confetti()};
+function confetti(){const cols=['#a99bff','#38e6dc','#3ef0a0','#febc2e','#fff'];for(let i=0;i<70;i++){const s=document.createElement('div');s.className='conf';s.style.left=Math.random()*100+'vw';s.style.background=cols[i%cols.length];document.body.appendChild(s);
+ const dx=(Math.random()-.5)*200,dur=1800+Math.random()*1600;s.animate([{transform:'translate(0,0) rotate(0)'},{transform:`translate(${dx}px,${innerHeight+40}px) rotate(${Math.random()*720}deg)`}],{duration:dur,easing:'cubic-bezier(.3,.6,.5,1)'}).onfinish=()=>s.remove()}}
+
+/* tilt */
+const card=document.getElementById('card');
+addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const rx=(e.clientY/innerHeight-.5)*-6,ry=(e.clientX/innerWidth-.5)*6;card.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`});
+})();
+</script>
+</body>
+</html>
